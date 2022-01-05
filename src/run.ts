@@ -21,15 +21,22 @@ export const run = async (inputs: Inputs): Promise<void> => {
   pulls.reverse()
 
   const pullsByLabels = groupPullRequestsByLabels(pulls, inputs.labelPrefix)
-  const desiredStates = computeDesiredStates(pullsByLabels)
+  for (const [labels, pulls] of pullsByLabels) {
+    core.info(`--`)
+    core.info(labels)
+    for (const pull of pulls) {
+      core.info(`#${pull.number} (${pull.state})`)
+    }
+  }
 
+  const desiredStates = computeDesiredStates(pullsByLabels)
   for (const desiredState of desiredStates) {
     core.info(`--`)
     core.info([...desiredState.reviewers].map((r) => `@${r}`).join())
     for (const pull of desiredState.pulls) {
       const currentReviewers = extractReviewerUsers(pull)
       const consistent = [...desiredState.reviewers].every((r) => currentReviewers.has(r))
-      core.info(`#${pull.number} (${String(consistent)}) ${[...desiredState.reviewers].map((r) => `@${r}`).join()}`)
+      core.info(`#${pull.number} (${String(consistent)}) ${[...currentReviewers].map((r) => `@${r}`).join()}`)
     }
   }
 }
@@ -83,7 +90,7 @@ type DesiredState = {
 const computeDesiredStates = (pullsByLabels: Map<string, PullRequest[]>): DesiredState[] => {
   const states: DesiredState[] = []
   for (const [, pulls] of pullsByLabels) {
-    if (pulls.length < 1) {
+    if (pulls.length < 2) {
       continue
     }
     if (!pulls.some((pull) => pull.state === 'open')) {
