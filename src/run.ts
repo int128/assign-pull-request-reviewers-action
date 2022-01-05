@@ -24,11 +24,13 @@ export const run = async (inputs: Inputs): Promise<void> => {
   const desiredStates = computeDesiredStates(pullsByLabels)
 
   for (const desiredState of desiredStates) {
-    core.info(`
---
-${desiredState.pulls.map((pull) => `#${pull.number}`).join()}
-${[...desiredState.reviewers].map((r) => `@${r}`).join()}
-    `)
+    core.info(`--`)
+    core.info([...desiredState.reviewers].map((r) => `@${r}`).join())
+    for (const pull of desiredState.pulls) {
+      const currentReviewers = extractReviewerUsers(pull)
+      const consistent = [...desiredState.reviewers].every((r) => currentReviewers.has(r))
+      core.info(`#${pull.number} (${String(consistent)}) ${[...desiredState.reviewers].map((r) => `@${r}`).join()}`)
+    }
   }
 }
 
@@ -59,6 +61,9 @@ const groupPullRequestsByLabels = (pulls: PullRequest[], labelPrefix: string): M
         return label.name
       })
       .join()
+    if (labels === '') {
+      continue
+    }
 
     const labeledPulls = m.get(labels)
     if (labeledPulls === undefined) {
