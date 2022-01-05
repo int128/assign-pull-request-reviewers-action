@@ -1,9 +1,14 @@
 name: hello-world
 description: say Hello World
+
 inputs:
-  name:
-    description: example input
+  label-prefix:
+    description: prefix of label to filter
+    required: false
+  token:
+    description: GitHub token
     required: true
+
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
