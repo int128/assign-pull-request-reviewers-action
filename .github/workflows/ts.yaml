@@ -39,4 +39,4 @@ jobs:
       - name: e2e-test
         uses: ./
         with:
-          name: foo
+          label-prefix: renovate/
