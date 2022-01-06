@@ -3,7 +3,7 @@ import { run } from './run'
 
 const main = async (): Promise<void> => {
   await run({
-    labelPrefix: core.getInput('label-prefix'),
+    labelPrefix: core.getInput('label-prefix', { required: true }),
     token: core.getInput('token', { required: true }),
   })
 }
