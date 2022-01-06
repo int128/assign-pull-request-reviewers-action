@@ -30,6 +30,7 @@ export const run = async (inputs: Inputs): Promise<void> => {
 
   core.info(`Write to dashboard`)
   const dashboard = formatDashboard(reviewGroups)
+  core.info(`----\n${dashboard}\n----`)
   await createOrUpdateDashboard(octokit, dashboard)
 
   core.info(`Reconcile reviewers`)
@@ -42,10 +43,10 @@ export const run = async (inputs: Inputs): Promise<void> => {
       const currentReviewers = new Set(extractReviewerUsers(pull))
       const alreadyRequested = group.reviewers.every((r) => currentReviewers.has(r))
       if (alreadyRequested) {
-        core.info(`#${pull.number}: already review-requested, skip`)
+        core.info(`#${pull.number}: already requested to ${group.reviewers.map((r) => `@${r}`).join()}, skip`)
         continue
       }
-      core.info(`#${pull.number}: requesting a review by ${group.reviewers.map((r) => `@${r}`).join()}`)
+      core.info(`#${pull.number}: requesting a review to ${group.reviewers.map((r) => `@${r}`).join()}`)
       await octokit.rest.pulls.requestReviewers({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
