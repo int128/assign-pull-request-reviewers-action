@@ -30,7 +30,7 @@ export const run = async (inputs: Inputs): Promise<void> => {
 
   core.info(`Write to dashboard`)
   const dashboard = formatDashboard(reviewGroups)
-  core.info(dashboard)
+  core.info(`----\n${dashboard}\n----`)
   await createOrUpdateDashboard(octokit, dashboard)
 
   core.info(`Reconcile reviewers`)
