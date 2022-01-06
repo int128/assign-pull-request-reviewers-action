@@ -4,7 +4,7 @@ description: say Hello World
 inputs:
   label-prefix:
     description: prefix of label to filter
-    required: false
+    required: true
   token:
     description: GitHub token
     required: true
