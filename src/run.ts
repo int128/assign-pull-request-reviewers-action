@@ -19,28 +19,41 @@ export const run = async (inputs: Inputs): Promise<void> => {
     per_page: 100,
   })
   pulls.reverse()
+  core.info(`Found pull requests ${pulls.map((pull) => `#${pull.number}`).join()}`)
 
   core.info(`Compute the pull request groups`)
   const groups = computePullRequestGroups(pulls, inputs.labelPrefix)
-  for (const group of groups) {
+  const reviewGroups = computePullRequestReviewGroups(groups)
+  for (const group of reviewGroups) {
     core.info(`labels(${group.labels.join()}) => ${group.pulls.map((pull) => `#${pull.number}`).join()}`)
   }
 
-  core.info(`Compute the desired state`)
-  const reviewGroups = computePullRequestReviewGroups(groups)
-  for (const group of reviewGroups) {
-    core.info(`labels(${group.labels.join()})`)
-    core.info(`reviewers(${group.reviewers.map((r) => `@${r}`).join()})`)
-    for (const pull of group.pulls) {
-      const currentReviewers = new Set(extractReviewerUsers(pull))
-      const consistent = group.reviewers.every((r) => currentReviewers.has(r))
-      core.info(`#${pull.number} (${consistent ? 'o' : 'x'}) ${[...currentReviewers].map((r) => `@${r}`).join()}`)
-    }
-  }
-
-  core.info(`Writing to dashboard`)
+  core.info(`Write to dashboard`)
   const dashboard = formatDashboard(reviewGroups)
   await createOrUpdateDashboard(octokit, dashboard)
+
+  core.info(`Reconcile reviewers`)
+  for (const group of reviewGroups) {
+    for (const pull of group.pulls) {
+      if (pull.state !== 'open') {
+        core.info(`#${pull.number}: state is ${pull.state}, skip`)
+        continue
+      }
+      const currentReviewers = new Set(extractReviewerUsers(pull))
+      const alreadyRequested = group.reviewers.every((r) => currentReviewers.has(r))
+      if (alreadyRequested) {
+        core.info(`#${pull.number}: already review-requested, skip`)
+        continue
+      }
+      core.info(`#${pull.number}: requesting a review by ${group.reviewers.map((r) => `@${r}`).join()}`)
+      await octokit.rest.pulls.requestReviewers({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        pull_number: pull.number,
+        reviewers: group.reviewers,
+      })
+    }
+  }
 }
 
 const formatDashboard = (groups: PullRequestReviewGroup[]): string => {
@@ -67,16 +80,18 @@ These pull requests are reviewed by ${group.reviewers.map((r) => `@${r}`).join('
 }
 
 const createOrUpdateDashboard = async (octokit: Octokit, body: string) => {
+  const keyLabel = 'pull-request-review-dashboard'
   const { data: issues } = await octokit.rest.issues.listForRepo({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
-    labels: 'pull-request-review-dashboard',
+    labels: keyLabel,
     per_page: 1,
     sort: 'created',
     direction: 'asc',
   })
   const issue = issues.pop()
   if (issue) {
+    core.info(`Updating the issue #${issue.number}`)
     return await octokit.rest.issues.update({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
@@ -85,27 +100,15 @@ const createOrUpdateDashboard = async (octokit: Octokit, body: string) => {
       body,
     })
   }
+  core.info(`Creating an issue`)
   return await octokit.rest.issues.create({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     title: 'Pull Request Review Dashboard',
-    labels: ['pull-request-review-dashboard'],
+    labels: [keyLabel],
     body,
   })
 }
-
-// for (const pull of pulls) {
-//   const currentReviewers = extractReviewerUsers(pull)
-//   const consistent = [...desiredReviewers].every((r) => currentReviewers.has(r))
-//   if (!consistent) {
-//     await octokit.rest.pulls.requestReviewers({
-//       owner: github.context.repo.owner,
-//       repo: github.context.repo.repo,
-//       pull_number: pull.number,
-//       reviewers: [...desiredReviewers],
-//     })
-//   }
-// }
 
 type PullRequestGroup = {
   labels: readonly string[]
@@ -149,9 +152,6 @@ type PullRequestReviewGroup = PullRequestGroup & {
 const computePullRequestReviewGroups = (groups: PullRequestGroup[]): PullRequestReviewGroup[] => {
   const reviewGroups: PullRequestReviewGroup[] = []
   for (const group of groups) {
-    if (group.pulls.length < 2) {
-      continue
-    }
     if (!group.pulls.some((pull) => pull.state === 'open')) {
       continue
     }
