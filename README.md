@@ -25,7 +25,7 @@ Let us think a directory structure of monorepo, for example,
 We would like to update a dependency per component separately, and assign pull requests of same dependency to same reviewer.
 
 
-### Solution
+### How to use
 
 Set up Renovate with `renovate.json5`.
 
@@ -73,16 +73,13 @@ jobs:
           label-prefix: renovate/
 ```
 
+
+### What this action does
+
 This action will assign a reviewer as follows:
 
 - Assign a reviewer to pull requests which have same labels
 - Determine a reviewer from the oldest pull request
-
-It will also create an issue of review dashboard.
-See the example of [#9](https://github.com/int128/assign-pull-request-reviewers-action/issues/9).
-
-
-### Example
 
 If the following pull requests are open,
 
@@ -94,6 +91,11 @@ this action will request reviews as follows,
 
 - Request a review of #2 to `@foo`
 - Request a review of #3 to `@foo`
+
+It will create an issue of the review dashboard.
+See [an example](https://github.com/int128/assign-pull-request-reviewers-action/issues/9).
+
+![image](https://user-images.githubusercontent.com/321266/148638925-a9fc4109-6511-4baa-9304-777758efea96.png)
 
 
 ## Inputs
