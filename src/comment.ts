@@ -1,7 +1,12 @@
 import * as core from '@actions/core'
 import { Octokit, Repository } from './types'
 
-export const createOrUpdateComment = async (octokit: Octokit, repository: Repository, pullNumber: number, body: string) => {
+export const createOrUpdateComment = async (
+  octokit: Octokit,
+  repository: Repository,
+  pullNumber: number,
+  body: string
+) => {
   const commentKey = `<!-- assign-pull-request-reviewers-action -->`
 
   core.info(`#${pullNumber}: finding key ${commentKey}`)
