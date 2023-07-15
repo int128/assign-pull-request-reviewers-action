@@ -5,7 +5,7 @@ export const createOrUpdateComment = async (
   octokit: Octokit,
   repository: Repository,
   pullNumber: number,
-  body: string
+  body: string,
 ) => {
   const commentKey = `<!-- assign-pull-request-reviewers-action -->`
 
