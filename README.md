@@ -42,10 +42,11 @@ Set up Renovate with `renovate.json5`.
   ],
   "packageRules": [
     {
-      "matchPaths": ["components/**"],
+      "description": "Update dependencies per component",
+      "matchFileNames": ["components/**"],
       "additionalBranchPrefix": "{{packageFileDir}}-",
       "commitMessageSuffix": "({{packageFileDir}})",
-    }
+    },
   ],
 }
 ```
