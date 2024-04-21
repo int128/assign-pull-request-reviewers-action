@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { createOrUpdateDashboard, formatDashboard } from './dashboard'
-import { computePullRequestGroups, computePullRequestReviewGroups } from './group'
-import { reconcile } from './reconcile'
+import { createOrUpdateDashboard, formatDashboard } from './dashboard.js'
+import { computePullRequestGroups, computePullRequestReviewGroups } from './group.js'
+import { reconcile } from './reconcile.js'
 
 type Inputs = {
   labelPrefix: string

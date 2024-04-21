@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { Octokit, Repository } from './types'
+import { Octokit, Repository } from './types.js'
 
 export const createOrUpdateComment = async (
   octokit: Octokit,

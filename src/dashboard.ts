@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import { Octokit, Repository } from './types'
-import { PullRequestReviewGroup } from './group'
+import { Octokit, Repository } from './types.js'
+import { PullRequestReviewGroup } from './group.js'
 
 export const formatDashboard = (groups: PullRequestReviewGroup[]): string => {
   const lines: string[] = []
