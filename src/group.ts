@@ -1,4 +1,4 @@
-import { PullRequest } from './types'
+import { PullRequest } from './types.js'
 
 export type PullRequestGroup = {
   labels: readonly string[]

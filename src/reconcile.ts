@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
-import { createOrUpdateComment } from './comment'
-import { extractReviewerUsers, PullRequestReviewGroup } from './group'
-import { Octokit, PullRequest, Repository } from './types'
+import { createOrUpdateComment } from './comment.js'
+import { extractReviewerUsers, PullRequestReviewGroup } from './group.js'
+import { Octokit, PullRequest, Repository } from './types.js'
 
 export const reconcile = async (octokit: Octokit, repo: Repository, groups: PullRequestReviewGroup[]) => {
   for (const group of groups) {
