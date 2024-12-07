@@ -1,6 +1,5 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { createOrUpdateDashboard, formatDashboard } from './dashboard.js'
 import { computePullRequestGroups, computePullRequestReviewGroups } from './group.js'
 import { reconcile } from './reconcile.js'
 
@@ -31,11 +30,5 @@ export const run = async (inputs: Inputs): Promise<void> => {
     core.info(`* labels(${group.labels.join()}) => ${group.pulls.map((pull) => `#${pull.number}`).join()}`)
   }
 
-  const dashboard = formatDashboard(reviewGroups)
-  core.info(`Review dashboard:\n----\n${dashboard}\n----`)
-  core.info(`Writing to issue`)
-  await createOrUpdateDashboard(octokit, github.context.repo, dashboard)
-
-  core.info(`Reconciling pull request reviewers`)
   await reconcile(octokit, github.context.repo, reviewGroups)
 }
