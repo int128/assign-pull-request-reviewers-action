@@ -1,9 +1,15 @@
 import * as core from '@actions/core'
-import { createOrUpdateComment } from './comment.js'
+import { createOrUpdateIssueBody, createOrUpdateIssueComment } from './issue.js'
 import { extractReviewerUsers, PullRequestReviewGroup } from './group.js'
 import { Octokit, PullRequest, Repository } from './types.js'
+import { formatComment, formatDashboard } from './format.js'
 
 export const reconcile = async (octokit: Octokit, repo: Repository, groups: PullRequestReviewGroup[]) => {
+  const dashboard = formatDashboard(groups)
+  core.info(`Review dashboard:\n----\n${dashboard}\n----`)
+  core.info(`Writing to issue`)
+  await createOrUpdateIssueBody(octokit, repo, 'pull-request-review-dashboard', dashboard)
+
   for (const group of groups) {
     const comment = formatComment(group)
     for (const pull of group.pulls) {
@@ -12,28 +18,10 @@ export const reconcile = async (octokit: Octokit, repo: Repository, groups: Pull
         continue
       }
 
-      await createOrUpdateComment(octokit, repo, pull.number, comment)
+      await createOrUpdateIssueComment(octokit, repo, pull.number, comment)
       await requestReview(octokit, repo, pull, group)
     }
   }
-}
-
-const formatComment = (group: PullRequestReviewGroup) => {
-  const lines: string[] = []
-  lines.push(`\
-## Related pull requests (${group.labels.join(', ')})
-These pull requests are reviewed by ${group.reviewers.map((r) => `@${r}`).join(' ')}.
-
-| Pull Request | Merged |
-|--------------|--------|`)
-  for (const pull of group.pulls) {
-    let merged = '-'
-    if (pull.merged_at) {
-      merged = `:white_check_mark: ${new Date(pull.merged_at).toISOString().substring(0, 10)}`
-    }
-    lines.push(`| <ul><li>#${pull.number}</li></ul> | ${merged} |`)
-  }
-  return lines.join('\n')
 }
 
 const requestReview = async (octokit: Octokit, repo: Repository, pull: PullRequest, group: PullRequestReviewGroup) => {
