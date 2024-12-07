@@ -5,21 +5,35 @@ import { Octokit, PullRequest, Repository } from './types.js'
 
 export const reconcile = async (octokit: Octokit, repo: Repository, groups: PullRequestReviewGroup[]) => {
   for (const group of groups) {
-    const comment = [`## Related pull requests (${group.labels.join(', ')})`]
-    for (const pull of group.pulls) {
-      comment.push(`- #${pull.number}`)
-    }
-
+    const comment = formatComment(group)
     for (const pull of group.pulls) {
       if (pull.state !== 'open') {
         core.info(`#${pull.number}: state is ${pull.state}, skip`)
         continue
       }
 
-      await createOrUpdateComment(octokit, repo, pull.number, comment.join('\n'))
+      await createOrUpdateComment(octokit, repo, pull.number, comment)
       await requestReview(octokit, repo, pull, group)
     }
   }
+}
+
+const formatComment = (group: PullRequestReviewGroup) => {
+  const lines: string[] = []
+  lines.push(`\
+## Related pull requests (${group.labels.join(', ')})
+These pull requests are reviewed by ${group.reviewers.map((r) => `@${r}`).join(' ')}.
+
+| Pull Request | Merged |
+|--------------|--------|`)
+  for (const pull of group.pulls) {
+    let merged = '-'
+    if (pull.merged_at) {
+      merged = `:white_check_mark: ${new Date(pull.merged_at).toISOString().substring(0, 10)}`
+    }
+    lines.push(`| <ul><li>#${pull.number}</li></ul> | ${merged} |`)
+  }
+  return lines.join('\n')
 }
 
 const requestReview = async (octokit: Octokit, repo: Repository, pull: PullRequest, group: PullRequestReviewGroup) => {

@@ -5,7 +5,6 @@ This is an action to assign reviewers of pull requests by the following rules:
 - Assign a reviewer to pull requests which have same labels
 - Determine a reviewer from the oldest pull request
 
-
 ## Getting Started with Renovate
 
 ### Problem to solve
@@ -24,28 +23,21 @@ Let us think a directory structure of monorepo, for example,
 
 We would like to update a dependency per component separately, and assign pull requests of same dependency to same reviewer.
 
-
 ### How to use
 
 Set up Renovate with `renovate.json5`.
 
 ```json5
 {
-  "extends": [
-    "config:base",
-  ],
-  "labels": [
-    "renovate/{{depName}}",
-  ],
-  "reviewers": [
-    "team:YOUR-TEAM",
-  ],
-  "packageRules": [
+  extends: ['config:base'],
+  labels: ['renovate/{{depName}}'],
+  reviewers: ['team:YOUR-TEAM'],
+  packageRules: [
     {
-      "description": "Update dependencies per component",
-      "matchFileNames": ["components/**"],
-      "additionalBranchPrefix": "{{packageFileDir}}-",
-      "commitMessageSuffix": "({{packageFileDir}})",
+      description: 'Update dependencies per component',
+      matchFileNames: ['components/**'],
+      additionalBranchPrefix: '{{packageFileDir}}-',
+      commitMessageSuffix: '({{packageFileDir}})',
     },
   ],
 }
@@ -74,7 +66,6 @@ jobs:
           label-prefix: renovate/
 ```
 
-
 ### What this action does
 
 This action will assign a reviewer as follows:
@@ -98,14 +89,12 @@ See [an example](https://github.com/int128/assign-pull-request-reviewers-action/
 
 ![image](https://user-images.githubusercontent.com/321266/148638925-a9fc4109-6511-4baa-9304-777758efea96.png)
 
-
 ## Inputs
 
-| Name | Default | Description
-|------|----------|------------
-| `label-prefix` | (required) | Prefix of label to filter
-| `token` | `github.token` | GitHub token
-
+| Name           | Default        | Description               |
+| -------------- | -------------- | ------------------------- |
+| `label-prefix` | (required)     | Prefix of label to filter |
+| `token`        | `github.token` | GitHub token              |
 
 ## Outputs
 
