@@ -25,14 +25,13 @@ const formatComment = (group: PullRequestReviewGroup) => {
 These pull requests are reviewed by ${group.reviewers.map((r) => `@${r}`).join(' ')}.
 
 | Pull Request | Merged |
-|--------------|--------|
-`)
+|--------------|--------|`)
   for (const pull of group.pulls) {
     let merged = '-'
     if (pull.merged_at) {
       merged = new Date(pull.merged_at).toISOString().substring(0, 10)
     }
-    lines.push(`| <ul><li>#${pull.number}</li></ul> | ${merged} |`)
+    lines.push(`| <ul><li>#${pull.number}</li></ul> | :white_check_mark: ${merged} |`)
   }
   return lines.join('\n')
 }
