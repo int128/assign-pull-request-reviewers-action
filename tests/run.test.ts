@@ -1,5 +1,5 @@
-import { test } from 'vitest'
+import { expect, test } from 'vitest'
 
 test('TODO', () => {
-  //
+  expect('dummy').toBe('dummy')
 })
