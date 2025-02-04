@@ -13,12 +13,14 @@
     "@octokit/types": "13.8.0"
   },
   "devDependencies": {
+    "@eslint/js": "9.19.0",
     "@tsconfig/node20": "20.1.4",
     "@types/node": "20.17.16",
     "@vercel/ncc": "0.38.3",
     "@vitest/eslint-plugin": "1.1.25",
     "eslint": "9.19.0",
     "js-yaml": "4.1.0",
+    "pnpm": "10.1.0",
     "prettier": "3.4.2",
     "typescript": "5.7.3",
     "typescript-eslint": "8.22.0",
@@ -27,5 +29,5 @@
   "engines": {
     "node": "20.x"
   },
-  "packageManager": "pnpm@9.15.4"
+  "packageManager": "pnpm@10.1.0"
 }
