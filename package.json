@@ -20,7 +20,7 @@
     "@vitest/eslint-plugin": "1.1.37",
     "eslint": "9.22.0",
     "js-yaml": "4.1.0",
-    "pnpm": "10.6.3",
+    "pnpm": "10.6.4",
     "prettier": "3.5.3",
     "typescript": "5.8.2",
     "typescript-eslint": "8.26.1",
@@ -29,5 +29,5 @@
   "engines": {
     "node": "20.x"
   },
-  "packageManager": "pnpm@10.6.3"
+  "packageManager": "pnpm@10.6.4"
 }
