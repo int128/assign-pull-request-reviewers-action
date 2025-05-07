@@ -9,7 +9,7 @@
   "type": "module",
   "dependencies": {
     "@actions/core": "1.11.1",
-    "@actions/github": "6.0.0",
+    "@actions/github": "6.0.1",
     "@octokit/types": "13.10.0"
   },
   "devDependencies": {
