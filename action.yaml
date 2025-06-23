@@ -1,4 +1,4 @@
-name: assign-pull-request-reviewers-action
+name: group-pull-request-action
 description: assign reviewers of pull requests by labels
 
 inputs:

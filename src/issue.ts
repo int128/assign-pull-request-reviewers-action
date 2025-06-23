@@ -7,7 +7,7 @@ export const createOrUpdateIssueComment = async (
   issueNumber: number,
   body: string,
 ) => {
-  const commentKey = `<!-- assign-pull-request-reviewers-action -->`
+  const commentKey = `<!-- group-pull-request-action -->`
 
   core.info(`#${issueNumber}: finding key ${commentKey}`)
   const { data: comments } = await octokit.rest.issues.listComments({

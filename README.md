@@ -1,4 +1,4 @@
-# assign-pull-request-reviewers-action [![ts](https://github.com/int128/assign-pull-request-reviewers-action/actions/workflows/ts.yaml/badge.svg)](https://github.com/int128/assign-pull-request-reviewers-action/actions/workflows/ts.yaml)
+# group-pull-request-action [![ts](https://github.com/int128/group-pull-request-action/actions/workflows/ts.yaml/badge.svg)](https://github.com/int128/group-pull-request-action/actions/workflows/ts.yaml)
 
 This is an action to assign reviewers of pull requests by the following rules:
 
@@ -61,7 +61,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: int128/assign-pull-request-reviewers-action@v1
+      - uses: int128/group-pull-request-action@v1
         with:
           label-prefix: renovate/
 ```
@@ -85,7 +85,7 @@ this action will request reviews as follows,
 - Request a review of #3 to `@foo`
 
 It will create an issue of the review dashboard.
-See [an example](https://github.com/int128/assign-pull-request-reviewers-action/issues/9).
+See [an example](https://github.com/int128/group-pull-request-action/issues/9).
 
 ![image](https://user-images.githubusercontent.com/321266/148638925-a9fc4109-6511-4baa-9304-777758efea96.png)
 
