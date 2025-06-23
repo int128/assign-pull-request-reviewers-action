@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { computePullRequestGroups, computePullRequestReviewGroups } from './group.js'
+import { computePullRequestGroups } from './group.js'
 import { reconcile } from './reconcile.js'
 
 type Inputs = {
@@ -23,12 +23,10 @@ export const run = async (inputs: Inputs): Promise<void> => {
   core.info(`Found pull requests ${pulls.map((pull) => `#${pull.number}`).join()}`)
 
   const groups = computePullRequestGroups(pulls, inputs.labelPrefix)
-  const reviewGroups = computePullRequestReviewGroups(groups)
-
   core.info(`Pull request groups:`)
-  for (const group of reviewGroups) {
+  for (const group of groups) {
     core.info(`* labels(${group.labels.join()}) => ${group.pulls.map((pull) => `#${pull.number}`).join()}`)
   }
 
-  await reconcile(octokit, github.context.repo, reviewGroups)
+  await reconcile(octokit, github.context.repo, groups)
 }
